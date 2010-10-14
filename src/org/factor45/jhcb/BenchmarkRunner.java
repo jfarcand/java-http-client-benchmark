@@ -8,7 +8,7 @@ import org.factor45.jhcb.benchmark.HotpotatoPipeliningBenchmark;
 import org.factor45.jhcb.result.BenchmarkResult;
 
 /**
- * @author <a href="mailto:bruno.carvalho@wit-software.com">Bruno de Carvalho</a>
+ * @author <a href="http://bruno.factor45.org/">Bruno de Carvalho</a>
  */
 public class BenchmarkRunner {
 
