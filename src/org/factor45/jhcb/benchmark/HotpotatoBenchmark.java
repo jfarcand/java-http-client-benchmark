@@ -7,6 +7,7 @@ import org.factor45.hotpotato.util.HostPortAndUri;
 import org.factor45.jhcb.result.BatchResult;
 import org.factor45.jhcb.result.ThreadResult;
 import org.jboss.netty.handler.codec.http.DefaultHttpRequest;
+import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpVersion;
@@ -48,6 +49,7 @@ public class HotpotatoBenchmark extends AbstractBenchmark {
 
         this.target = HostPortAndUri.splitUrl(this.url);
         this.request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, this.target.getUri());
+        HttpHeaders.setKeepAlive(this.request, true);
     }
 
     @Override

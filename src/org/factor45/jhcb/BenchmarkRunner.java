@@ -15,29 +15,33 @@ public class BenchmarkRunner {
     // public static methods ------------------------------------------------------------------------------------------
 
     public static void runHotpotatoBenchmark() {
-        //HotpotatoBenchmark benchmark = new HotpotatoBenchmark(1, 1000, 100, "http://localhost:8080/uri");
-        //HotpotatoBenchmark benchmark = new HotpotatoBenchmark(10, 100, 100, "http://localhost:8080/uri");
-        AbstractBenchmark benchmark = new HotpotatoBenchmark(100, 10, 100, "http://localhost:8080/uri");
+        //AbstractBenchmark benchmark = new HotpotatoBenchmark(1, 1000, 100, "http://10.0.0.2:8090/index.html");
+        //AbstractBenchmark benchmark = new HotpotatoBenchmark(10, 100, 100, "http://10.0.0.2:8080/index.html");
+        AbstractBenchmark benchmark = new HotpotatoBenchmark(100, 10, 100, "http://10.0.0.2:8080/index.html");
         BenchmarkResult result = benchmark.doBenchmark();
         System.out.println(result);
     }
 
     public static void runHotpotatoPipeliningBenchmark() {
-        //HotpotatoBenchmark benchmark = new HotpotatoPipeliningBenchmark(1, 1000, 100, "http://localhost:8080/uri");
-        //HotpotatoBenchmark benchmark = new HotpotatoPipeliningBenchmark(10, 100, 100, "http://localhost:8080/uri");
-        AbstractBenchmark benchmark = new HotpotatoPipeliningBenchmark(100, 10, 100, "http://localhost:8080/uri");
+        //AbstractBenchmark benchmark = new HotpotatoPipeliningBenchmark(1, 1000, 100, "http://10.0.0.2:8080/index.html");
+        //AbstractoBenchmark benchmark = new HotpotatoPipeliningBenchmark(10, 100, 100, "http://10.0.0.2:8080/index.html");
+        AbstractBenchmark benchmark = new HotpotatoPipeliningBenchmark(100, 10, 100, "http://10.0.0.2:8080/index.html");
         BenchmarkResult result = benchmark.doBenchmark();
         System.out.println(result);
     }
 
     public static void runApacheBenchmark() {
-        AbstractBenchmark benchmark = new ApacheBenchmark(10, 100, 100, "http://localhost:8080/uri");
+        //AbstractBenchmark benchmark = new ApacheBenchmark(1, 1000, 100, "http://10.0.0.2:8080/index.html");
+        //AbstractBenchmark benchmark = new ApacheBenchmark(10, 100, 100, "http://10.0.0.2:8080/index.html");
+        AbstractBenchmark benchmark = new ApacheBenchmark(100, 10, 100, "http://10.0.0.2:8080/index.html");
         BenchmarkResult result = benchmark.doBenchmark();
         System.out.println(result);
     }
 
     public static void runAhcBenchmark() {
-        AbstractBenchmark benchmark = new AhcBenchmark(1, 1000, 100, "http://localhost:8080/uri");
+        //AbstractBenchmark benchmark = new AhcBenchmark(1, 1000, 100, "http://10.0.0.2:8080/index.html");
+        //AbstractBenchmark benchmark = new AhcBenchmark(10, 100, 100, "http://10.0.0.2:8080/index.html");
+        AbstractBenchmark benchmark = new AhcBenchmark(100, 10, 100, "http://10.0.0.2:8080/index.html");
         BenchmarkResult result = benchmark.doBenchmark();
         System.out.println(result);
     }
@@ -46,8 +50,8 @@ public class BenchmarkRunner {
 
     public static void main(String[] args) {
         //runHotpotatoBenchmark();
-        runHotpotatoPipeliningBenchmark();
+        //runHotpotatoPipeliningBenchmark();
         //runApacheBenchmark();
-        //runAhcBenchmark();
+        runAhcBenchmark();
     }
 }

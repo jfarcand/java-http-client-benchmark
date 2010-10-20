@@ -26,6 +26,7 @@ public class HotpotatoPipeliningBenchmark extends HotpotatoBenchmark {
 
         // Apart from pipelining, everything is set to defaults (only 3 connections per host!)
         DefaultHttpClientFactory factory = new DefaultHttpClientFactory();
+        factory.setMaxConnectionsPerHost(10);
         factory.setConnectionFactory(new PipeliningHttpConnectionFactory());
         this.client = factory.getClient();
 

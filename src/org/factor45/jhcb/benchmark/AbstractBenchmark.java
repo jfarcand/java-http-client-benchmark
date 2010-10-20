@@ -13,7 +13,6 @@ import java.util.concurrent.Executors;
  */
 public abstract class AbstractBenchmark {
 
-
     // constants ------------------------------------------------------------------------------------------------------
 
     protected static final int WARMUP_REQUESTS = 1000;

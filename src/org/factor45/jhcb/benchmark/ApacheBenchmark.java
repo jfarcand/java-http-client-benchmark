@@ -1,11 +1,15 @@
 package org.factor45.jhcb.benchmark;
 
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.params.ConnPerRoute;
+import org.apache.http.conn.params.ConnPerRouteBean;
+import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -44,6 +48,8 @@ public class ApacheBenchmark extends AbstractBenchmark {
 
         HttpParams params = new BasicHttpParams();
         ConnManagerParams.setMaxTotalConnections(params, 10);
+        ConnPerRouteBean connPerRoute = new ConnPerRouteBean(10);
+        ConnManagerParams.setMaxConnectionsPerRoute(params, connPerRoute);
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
