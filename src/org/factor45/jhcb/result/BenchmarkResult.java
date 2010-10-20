@@ -18,6 +18,8 @@ public class BenchmarkResult {
     private final float averageBatchTime;
     private final long totalBenchmarkTime;
     private final float requestsPerSecond;
+    private final float minRequestsPerSecond;
+    private final float maxRequestsPerSecond;
 
     // constructors ---------------------------------------------------------------------------------------------------
 
@@ -31,12 +33,23 @@ public class BenchmarkResult {
         long totalBenchmarkTime = 0;
         float totalRequestAverage = 0;
 
+        float minRequestAverage = Float.MAX_VALUE;
+        float maxRequestAverage = 0;
+
         for (BatchResult result : results) {
             totalTargetRequests += result.getBatchTargetRequests();
             totalSuccessfulRequests += result.getBatchSuccessfulRequests();
             totalFailedRequests += result.getBatchTargetRequests() - result.getBatchSuccessfulRequests();
             totalBenchmarkTime += result.getTotalBatchTime();
             totalRequestAverage += result.getAverageTimePerRequest();
+
+            if (result.getAverageTimePerRequest() < minRequestAverage) {
+                minRequestAverage = result.getAverageTimePerRequest();
+            }
+
+            if (result.getAverageTimePerRequest() > maxRequestAverage) {
+                maxRequestAverage = result.getAverageTimePerRequest();
+            }
         }
 
         this.targetRequests = totalTargetRequests;
@@ -47,6 +60,8 @@ public class BenchmarkResult {
         this.averageBatchTime = totalBenchmarkTime / (float) results.size();
         this.totalBenchmarkTime = totalBenchmarkTime;
         this.requestsPerSecond = 1000000000f / this.averageRequestTime;
+        this.maxRequestsPerSecond = 1000000000f / minRequestAverage;
+        this.minRequestsPerSecond = 1000000000f / maxRequestAverage;
     }
 
     // public static methods ------------------------------------------------------------------------------------------
@@ -117,13 +132,22 @@ public class BenchmarkResult {
         return requestsPerSecond;
     }
 
+    public float getMinRequestsPerSecond() {
+        return minRequestsPerSecond;
+    }
+
+    public float getMaxRequestsPerSecond() {
+        return maxRequestsPerSecond;
+    }
+
     // low level overrides --------------------------------------------------------------------------------------------
 
     @Override
     public String toString() {
         return "BenchmarkResult{" +
                "requestsPerSecond=" + decimal(requestsPerSecond) +
-               ", threads=" + threads +
+               "(max: " + decimal(maxRequestsPerSecond) + ", min: " + decimal(minRequestsPerSecond) + 
+               "), threads=" + threads +
                ", batches=" + batches +
                ", targetRequests=" + targetRequests +
                ", successfulRequests=" + successfulRequests +

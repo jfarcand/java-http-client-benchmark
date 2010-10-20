@@ -1,7 +1,11 @@
 package org.factor45.jhcb.benchmark;
 
+import com.ning.http.client.AsyncHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
+import com.ning.http.client.HttpResponseBodyPart;
+import com.ning.http.client.HttpResponseHeaders;
+import com.ning.http.client.HttpResponseStatus;
 import com.ning.http.client.Response;
 import org.factor45.jhcb.result.BatchResult;
 import org.factor45.jhcb.result.ThreadResult;
@@ -20,11 +24,11 @@ import java.util.concurrent.Future;
 public class AhcBenchmark extends AbstractBenchmark {
 
     // internal vars --------------------------------------------------------------------------------------------------
-    
+
     private AsyncHttpClient client;
-    
+
     // constructors ---------------------------------------------------------------------------------------------------
-    
+
     public AhcBenchmark(int threads, int requestsPerThreadPerBatch, int batches, String uri) {
         super(threads, requestsPerThreadPerBatch, batches, uri);
     }
@@ -87,20 +91,48 @@ public class AhcBenchmark extends AbstractBenchmark {
                     int successful = 0;
                     long start = System.nanoTime();
 
-                    List<Future<Response>> futures = new ArrayList<Future<Response>>(requestsPerThreadPerBatch);
+                    List<Future<Integer>> futures = new ArrayList<Future<Integer>>(requestsPerThreadPerBatch);
                     for (int i = 0; i < requestsPerThreadPerBatch; i++) {
                         try {
-                            futures.add(client.prepareGet(url).execute());
+                            futures.add(client.prepareGet(url).execute(new AsyncHandler<Integer>() {
+                                private HttpResponseStatus httpResponseStatus = null;
+
+                                @Override
+                                public void onThrowable(Throwable throwable) {
+                                }
+
+                                @Override
+                                public STATE onBodyPartReceived(HttpResponseBodyPart bodyPart) throws Exception {
+                                    return STATE.CONTINUE;
+                                }
+
+                                @Override
+                                public STATE onStatusReceived(HttpResponseStatus status) throws Exception {
+                                    this.httpResponseStatus = status;
+                                    return STATE.CONTINUE;
+                                }
+
+                                @Override
+                                public STATE onHeadersReceived(HttpResponseHeaders headers) throws Exception {
+                                    return STATE.CONTINUE;
+                                }
+
+                                @Override
+                                public Integer onCompleted() throws Exception {
+                                    return (httpResponseStatus == null ? 500 : httpResponseStatus.getStatusCode());
+                                }
+                            }));
                         } catch (IOException e) {
                             System.err.println("Failed to execute request.");
                         }
                     }
 
-                    for (Future<Response> future : futures) {
+                    for (Future<Integer> future : futures) {
                         try {
-                            future.get();
-                            // as long as it gets a response, it's considered successful
-                            successful++;
+                            int result = future.get();
+                            if ((result >= 200) && (result <= 299)) {
+                                successful++;
+                            }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (ExecutionException e) {
