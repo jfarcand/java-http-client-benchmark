@@ -58,7 +58,7 @@ public class ApacheBenchmark extends AbstractBenchmark {
         super.setup();
 
         HttpParams params = new BasicHttpParams();
-        //ConnManagerParams.setMaxTotalConnections(params, 10);
+        ConnManagerParams.setMaxTotalConnections(params, 10);
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
