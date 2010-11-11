@@ -1,12 +1,31 @@
+/*
+ * Copyright 2010 Bruno de Carvalho
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.factor45.jhcb.benchmark;
 
 import com.ning.http.client.AsyncHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
+import com.ning.http.client.AsyncHttpProviderConfig;
 import com.ning.http.client.HttpResponseBodyPart;
 import com.ning.http.client.HttpResponseHeaders;
 import com.ning.http.client.HttpResponseStatus;
 import com.ning.http.client.Response;
+import com.ning.http.client.logging.LogManager;
+import com.ning.http.client.logging.LoggerProvider;
+import com.ning.http.client.providers.netty.NettyAsyncHttpProviderConfig;
 import org.factor45.jhcb.result.BatchResult;
 import org.factor45.jhcb.result.ThreadResult;
 
@@ -33,19 +52,93 @@ public class AhcBenchmark extends AbstractBenchmark {
         super(threads, requestsPerThreadPerBatch, batches, uri);
     }
 
+    public static void setUpLogger() {
+        final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("UnitTest");
+        LogManager.setProvider(new LoggerProvider() {
+
+            public com.ning.http.client.logging.Logger getLogger(final Class<?> clazz) {
+                return new com.ning.http.client.logging.Logger() {
+
+                    public boolean isDebugEnabled() {
+                        return true;
+                    }
+
+                    public void debug(final String msg, final Object... msgArgs) {
+                        System.out.println(msg);
+                    }
+
+                    public void debug(final Throwable t) {
+                        t.printStackTrace();
+                    }
+
+                    public void debug(final Throwable t, final String msg, final Object... msgArgs) {
+                        System.out.println(msg);
+                        t.printStackTrace();
+                    }
+
+                    public void info(final String msg, final Object... msgArgs) {
+                        System.out.println(msg);
+                    }
+
+                    public void info(final Throwable t) {
+                        t.printStackTrace();
+                    }
+
+                    public void info(final Throwable t, final String msg, final Object... msgArgs) {
+                        System.out.println(msg);
+                        t.printStackTrace();
+                    }
+
+                    public void warn(final String msg, final Object... msgArgs) {
+                        System.out.println(msg);
+                    }
+
+                    public void warn(final Throwable t) {
+                        t.printStackTrace();
+                    }
+
+                    public void warn(final Throwable t, final String msg, final Object... msgArgs) {
+                        System.out.println(msg);
+                        t.printStackTrace();
+                    }
+
+                    public void error(final String msg, final Object... msgArgs) {
+                        System.out.println(msg);
+
+                    }
+
+                    public void error(final Throwable t) {
+                        t.printStackTrace();
+                    }
+
+                    public void error(final Throwable t, final String msg, final Object... msgArgs) {
+                        System.out.println(msg);
+                        t.printStackTrace();
+                    }
+                };
+            }
+        });
+    }
+
+
     // AbstractBenchmark ----------------------------------------------------------------------------------------------
 
     @Override
     protected void setup() {
         super.setup();
-
+        //setUpLogger();
         System.setProperty("com.ning.http.client.logging.LoggerProvider.class",
-                           "com.ning.http.client.logging.Slf4jLoggerProvider");
+                "com.ning.http.client.logging.Slf4jLoggerProvider");
+
+        AsyncHttpProviderConfig c = new NettyAsyncHttpProviderConfig();
+        c.addProperty(NettyAsyncHttpProviderConfig.USE_BLOCKING_IO, true);
 
         AsyncHttpClientConfig config = new AsyncHttpClientConfig.Builder()
                 .setMaximumConnectionsPerHost(10)
+                .setConnectionTimeoutInMs(0)
                 .build();
         this.client = new AsyncHttpClient(config);
+
     }
 
     @Override
@@ -91,45 +184,18 @@ public class AhcBenchmark extends AbstractBenchmark {
                     int successful = 0;
                     long start = System.nanoTime();
 
-                    List<Future<Integer>> futures = new ArrayList<Future<Integer>>(requestsPerThreadPerBatch);
+                    List<Future<Response>> futures = new ArrayList<Future<Response>>(requestsPerThreadPerBatch);
                     for (int i = 0; i < requestsPerThreadPerBatch; i++) {
                         try {
-                            futures.add(client.prepareGet(url).execute(new AsyncHandler<Integer>() {
-                                private HttpResponseStatus httpResponseStatus = null;
-
-                                @Override
-                                public void onThrowable(Throwable throwable) {
-                                }
-
-                                @Override
-                                public STATE onBodyPartReceived(HttpResponseBodyPart bodyPart) throws Exception {
-                                    return STATE.CONTINUE;
-                                }
-
-                                @Override
-                                public STATE onStatusReceived(HttpResponseStatus status) throws Exception {
-                                    this.httpResponseStatus = status;
-                                    return STATE.CONTINUE;
-                                }
-
-                                @Override
-                                public STATE onHeadersReceived(HttpResponseHeaders headers) throws Exception {
-                                    return STATE.CONTINUE;
-                                }
-
-                                @Override
-                                public Integer onCompleted() throws Exception {
-                                    return (httpResponseStatus == null ? 500 : httpResponseStatus.getStatusCode());
-                                }
-                            }));
+                            futures.add(client.prepareGet(url).execute());
                         } catch (IOException e) {
                             System.err.println("Failed to execute request.");
                         }
                     }
 
-                    for (Future<Integer> future : futures) {
+                    for (Future<Response> future : futures) {
                         try {
-                            int result = future.get();
+                            int result = future.get().getStatusCode();
                             if ((result >= 200) && (result <= 299)) {
                                 successful++;
                             }
@@ -146,6 +212,7 @@ public class AhcBenchmark extends AbstractBenchmark {
                 }
             });
         }
+
 
         try {
             latch.await();

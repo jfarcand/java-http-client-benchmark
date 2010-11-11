@@ -1,15 +1,26 @@
+/*
+ * Copyright 2010 Bruno de Carvalho
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.factor45.jhcb.benchmark;
 
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.conn.params.ConnPerRoute;
-import org.apache.http.conn.params.ConnPerRouteBean;
-import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -47,9 +58,7 @@ public class ApacheBenchmark extends AbstractBenchmark {
         super.setup();
 
         HttpParams params = new BasicHttpParams();
-        ConnManagerParams.setMaxTotalConnections(params, 10);
-        ConnPerRouteBean connPerRoute = new ConnPerRouteBean(10);
-        ConnManagerParams.setMaxConnectionsPerRoute(params, connPerRoute);
+        //ConnManagerParams.setMaxTotalConnections(params, 10);
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
@@ -95,7 +104,9 @@ public class ApacheBenchmark extends AbstractBenchmark {
                         try {
                             HttpResponse response = client.execute(get);
                             response.getEntity().consumeContent();
-                            successful++;
+                            if (response.getStatusLine().getStatusCode() == 200) {
+                                successful++;
+                            }
                         } catch (IOException e) {
                             get.abort();
                         }
