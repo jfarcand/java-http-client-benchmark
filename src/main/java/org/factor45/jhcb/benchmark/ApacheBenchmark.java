@@ -21,12 +21,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.factor45.jhcb.result.BatchResult;
@@ -58,7 +60,16 @@ public class ApacheBenchmark extends AbstractBenchmark {
         super.setup();
 
         HttpParams params = new BasicHttpParams();
+        params.setParameter(HttpProtocolParams.PROTOCOL_VERSION,
+                HttpVersion.HTTP_1_1);
+        params.setBooleanParameter(HttpProtocolParams.USE_EXPECT_CONTINUE,
+                false);
+        params.setBooleanParameter(HttpConnectionParams.STALE_CONNECTION_CHECK,
+                false);
+        params.setIntParameter(HttpConnectionParams.SOCKET_BUFFER_SIZE,
+                8 * 1024);
         ConnManagerParams.setMaxTotalConnections(params, 10);
+        ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRouteBean(10));
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
