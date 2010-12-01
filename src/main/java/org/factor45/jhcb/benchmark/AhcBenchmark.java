@@ -15,17 +15,9 @@
  */
 package org.factor45.jhcb.benchmark;
 
-import com.ning.http.client.AsyncHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.AsyncHttpProviderConfig;
-import com.ning.http.client.HttpResponseBodyPart;
-import com.ning.http.client.HttpResponseHeaders;
-import com.ning.http.client.HttpResponseStatus;
 import com.ning.http.client.Response;
-import com.ning.http.client.logging.LogManager;
-import com.ning.http.client.logging.LoggerProvider;
-import com.ning.http.client.providers.netty.NettyAsyncHttpProviderConfig;
 import org.factor45.jhcb.result.BatchResult;
 import org.factor45.jhcb.result.ThreadResult;
 
@@ -51,87 +43,11 @@ public class AhcBenchmark extends AbstractBenchmark {
     public AhcBenchmark(int threads, int requestsPerThreadPerBatch, int batches, String uri) {
         super(threads, requestsPerThreadPerBatch, batches, uri);
     }
-
-    public static void setUpLogger() {
-        final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("UnitTest");
-        LogManager.setProvider(new LoggerProvider() {
-
-            public com.ning.http.client.logging.Logger getLogger(final Class<?> clazz) {
-                return new com.ning.http.client.logging.Logger() {
-
-                    public boolean isDebugEnabled() {
-                        return true;
-                    }
-
-                    public void debug(final String msg, final Object... msgArgs) {
-                        System.out.println(msg);
-                    }
-
-                    public void debug(final Throwable t) {
-                        t.printStackTrace();
-                    }
-
-                    public void debug(final Throwable t, final String msg, final Object... msgArgs) {
-                        System.out.println(msg);
-                        t.printStackTrace();
-                    }
-
-                    public void info(final String msg, final Object... msgArgs) {
-                        System.out.println(msg);
-                    }
-
-                    public void info(final Throwable t) {
-                        t.printStackTrace();
-                    }
-
-                    public void info(final Throwable t, final String msg, final Object... msgArgs) {
-                        System.out.println(msg);
-                        t.printStackTrace();
-                    }
-
-                    public void warn(final String msg, final Object... msgArgs) {
-                        System.out.println(msg);
-                    }
-
-                    public void warn(final Throwable t) {
-                        t.printStackTrace();
-                    }
-
-                    public void warn(final Throwable t, final String msg, final Object... msgArgs) {
-                        System.out.println(msg);
-                        t.printStackTrace();
-                    }
-
-                    public void error(final String msg, final Object... msgArgs) {
-                        System.out.println(msg);
-
-                    }
-
-                    public void error(final Throwable t) {
-                        t.printStackTrace();
-                    }
-
-                    public void error(final Throwable t, final String msg, final Object... msgArgs) {
-                        System.out.println(msg);
-                        t.printStackTrace();
-                    }
-                };
-            }
-        });
-    }
-
-
     // AbstractBenchmark ----------------------------------------------------------------------------------------------
 
     @Override
     protected void setup() {
         super.setup();
-        //setUpLogger();
-        System.setProperty("com.ning.http.client.logging.LoggerProvider.class",
-                "com.ning.http.client.logging.Slf4jLoggerProvider");
-
-        AsyncHttpProviderConfig c = new NettyAsyncHttpProviderConfig();
-        c.addProperty(NettyAsyncHttpProviderConfig.USE_BLOCKING_IO, true);
 
         AsyncHttpClientConfig config = new AsyncHttpClientConfig.Builder()
                 .setMaximumConnectionsPerHost(10)

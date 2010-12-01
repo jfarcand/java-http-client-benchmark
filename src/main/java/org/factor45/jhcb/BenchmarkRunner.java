@@ -32,7 +32,7 @@ public class BenchmarkRunner {
     // public static methods ------------------------------------------------------------------------------------------
 
     public static void runHotpotatoBenchmark() {
-        AbstractBenchmark benchmark = new HotpotatoBenchmark(5, 50, 50, TARGET_URL);
+        AbstractBenchmark benchmark = new HotpotatoBenchmark(10, 50, 50, TARGET_URL);
         BenchmarkResult result = benchmark.doBenchmark();
         System.out.println(result);
     }
@@ -44,13 +44,13 @@ public class BenchmarkRunner {
     }
 
     public static void runApacheBenchmark() {
-        AbstractBenchmark benchmark = new ApacheBenchmark(5, 50, 50, TARGET_URL);
+        AbstractBenchmark benchmark = new ApacheBenchmark(10, 50, 50, TARGET_URL);
         BenchmarkResult result = benchmark.doBenchmark();
         System.out.println(result);
     }
 
     public static void runAhcBenchmark() {
-        AbstractBenchmark benchmark = new AhcBenchmark(5, 50, 50, TARGET_URL);
+        AbstractBenchmark benchmark = new AhcBenchmark(10, 50, 50, TARGET_URL);
         BenchmarkResult result = benchmark.doBenchmark();
         System.out.println(result);
     }
