@@ -15,7 +15,6 @@
  */
 package org.factor45.jhcb.benchmark;
 
-import org.apache.log4j.BasicConfigurator;
 import org.factor45.jhcb.result.BatchResult;
 import org.factor45.jhcb.result.BenchmarkResult;
 
