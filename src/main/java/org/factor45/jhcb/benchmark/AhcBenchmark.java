@@ -50,9 +50,10 @@ public class AhcBenchmark extends AbstractBenchmark {
         super.setup();
 
         AsyncHttpClientConfig config = new AsyncHttpClientConfig.Builder()
-                .setMaximumConnectionsPerHost(10)
+                .setMaximumConnectionsPerHost(25)
                 .setConnectionTimeoutInMs(0)
                 .build();
+
         this.client = new AsyncHttpClient(config);
 
     }

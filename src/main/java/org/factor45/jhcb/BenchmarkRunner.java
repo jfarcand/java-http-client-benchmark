@@ -27,7 +27,7 @@ import org.factor45.jhcb.result.BenchmarkResult;
  */
 public class BenchmarkRunner {
 
-    private final static String TARGET_URL = "http://192.168.2.106:8081";
+    private final static String TARGET_URL = "http://10.0.1.3:8081";
 
     // public static methods ------------------------------------------------------------------------------------------
 
@@ -58,8 +58,8 @@ public class BenchmarkRunner {
     // main -----------------------------------------------------------------------------------------------------------
 
     public static void main(String[] args) throws InterruptedException {
-       runAhcBenchmark();
-       runHotpotatoBenchmark();
-       runApacheBenchmark();
+        runAhcBenchmark();
+        runHotpotatoBenchmark();
+        runApacheBenchmark();
     }
 }
