@@ -15,6 +15,7 @@
  */
 package org.factor45.jhcb.benchmark;
 
+import com.ning.http.client.AsyncCompletionHandlerBase;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.Response;
@@ -28,6 +29,7 @@ import java.util.Vector;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author <a href="http://bruno.factor45.org/">Bruno de Carvalho</a>
@@ -50,7 +52,7 @@ public class AhcBenchmark extends AbstractBenchmark {
         super.setup();
 
         AsyncHttpClientConfig config = new AsyncHttpClientConfig.Builder()
-                .setMaximumConnectionsPerHost(25)
+                .setMaximumConnectionsPerHost(10)
                 .setConnectionTimeoutInMs(0)
                 .build();
 
@@ -98,36 +100,46 @@ public class AhcBenchmark extends AbstractBenchmark {
 
                 @Override
                 public void run() {
-                    int successful = 0;
+                    final AtomicInteger successful = new AtomicInteger();
                     long start = System.nanoTime();
-
-                    List<Future<Response>> futures = new ArrayList<Future<Response>>(requestsPerThreadPerBatch);
+                    final CountDownLatch responseReceivedLatch = new CountDownLatch(requestsPerThreadPerBatch);
                     for (int i = 0; i < requestsPerThreadPerBatch; i++) {
                         try {
-                            futures.add(client.prepareGet(url).execute());
+                            client.prepareGet(url).execute(new AsyncCompletionHandlerBase() {
+
+
+                                @Override
+                                public void onThrowable(Throwable t) {
+                                    responseReceivedLatch.countDown();                                    
+                                }
+
+                                @Override
+                                public Response onCompleted(Response response) throws Exception {
+                                    if ((response.getStatusCode() >= 200) && (response.getStatusCode() <= 299)) {
+                                        successful.incrementAndGet();
+                                    }
+                                    responseReceivedLatch.countDown();
+                                    return response;
+                                }
+                            });
+
                         } catch (IOException e) {
                             System.err.println("Failed to execute request.");
                         }
                     }
 
-                    for (Future<Response> future : futures) {
-                        try {
-                            int result = future.get().getStatusCode();
-                            if ((result >= 200) && (result <= 299)) {
-                                successful++;
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        responseReceivedLatch.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-
                     long totalTime = System.nanoTime() - start;
-                    threadResults.add(new ThreadResult(requestsPerThreadPerBatch, successful, totalTime));
+                    threadResults.add(new ThreadResult(requestsPerThreadPerBatch, successful.get(), totalTime));
                     latch.countDown();
                 }
-            });
+            }
+
+            );
         }
 
 

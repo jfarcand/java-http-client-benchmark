@@ -55,7 +55,7 @@ public class HotpotatoBenchmark extends AbstractBenchmark {
 
         // Mostly defaults
         DefaultHttpClientFactory factory = new DefaultHttpClientFactory();
-        factory.setMaxConnectionsPerHost(25);
+        factory.setMaxConnectionsPerHost(10);
         this.client = factory.getClient();
 
         if (!this.client.init()) {

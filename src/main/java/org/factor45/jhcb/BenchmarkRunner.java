@@ -58,8 +58,8 @@ public class BenchmarkRunner {
     // main -----------------------------------------------------------------------------------------------------------
 
     public static void main(String[] args) throws InterruptedException {
-        runAhcBenchmark();
-        runHotpotatoBenchmark();
-        runApacheBenchmark();
+       runAhcBenchmark();
+//        runHotpotatoBenchmark();
+//        runApacheBenchmark();
     }
 }
