@@ -32,7 +32,7 @@ public class BenchmarkRunner {
     // public static methods ------------------------------------------------------------------------------------------
 
     public static void runHotpotatoBenchmark() {
-        AbstractBenchmark benchmark = new HotpotatoBenchmark(50, 50, 50, TARGET_URL);
+        AbstractBenchmark benchmark = new HotpotatoBenchmark(100, 100, 100, TARGET_URL);
         BenchmarkResult result = benchmark.doBenchmark();
         System.out.println(result);
     }
@@ -44,13 +44,13 @@ public class BenchmarkRunner {
     }
 
     public static void runApacheBenchmark() {
-        AbstractBenchmark benchmark = new ApacheBenchmark(50, 50, 50, TARGET_URL);
+        AbstractBenchmark benchmark = new ApacheBenchmark(100, 100, 100, TARGET_URL);
         BenchmarkResult result = benchmark.doBenchmark();
         System.out.println(result);
     }
 
     public static void runAhcBenchmark() {
-        AbstractBenchmark benchmark = new AhcBenchmark(50, 50, 50, TARGET_URL);
+        AbstractBenchmark benchmark = new AhcBenchmark(100, 100, 100, TARGET_URL);
         BenchmarkResult result = benchmark.doBenchmark();
         System.out.println(result);
     }
@@ -58,8 +58,8 @@ public class BenchmarkRunner {
     // main -----------------------------------------------------------------------------------------------------------
 
     public static void main(String[] args) throws InterruptedException {
-       runAhcBenchmark();
-//        runHotpotatoBenchmark();
-//        runApacheBenchmark();
+        runAhcBenchmark();
+        runHotpotatoBenchmark();
+        runApacheBenchmark();
     }
 }
