@@ -59,7 +59,9 @@ public class BenchmarkRunner {
 
     public static void main(String[] args) throws InterruptedException {
         runAhcBenchmark();
-        runHotpotatoBenchmark();
+
+        // Hot Potato perform pretty well but doesn't support all the features needed to be considered stable.
+//        runHotpotatoBenchmark();
         runApacheBenchmark();
     }
 }
