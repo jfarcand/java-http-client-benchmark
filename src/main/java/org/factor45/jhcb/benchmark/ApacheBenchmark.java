@@ -69,6 +69,7 @@ public class ApacheBenchmark extends AbstractBenchmark {
         params.setIntParameter(HttpConnectionParams.SOCKET_BUFFER_SIZE,
                 8 * 1024);
         ConnManagerParams.setMaxTotalConnections(params, 10);
+        ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRouteBean(10));
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
