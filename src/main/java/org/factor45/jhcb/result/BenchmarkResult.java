@@ -143,9 +143,9 @@ public class BenchmarkResult {
                ", targetRequests=" + targetRequests +
                ", successfulRequests=" + successfulRequests +
                ", failedRequests=" + failedRequests +
-               ", averageRequestTime=" + decimal(averageRequestTime * 1000000f) +
-               "ms, averageBatchTime=" + decimal(averageBatchTime * 1000000f) +
-               "ms, totalBenchmarkTime=" + decimal(totalBenchmarkTime * 1000000f) +
+               ", averageRequestTime=" + decimal(averageRequestTime / 1000000f) +
+               "ms, averageBatchTime=" + decimal(averageBatchTime / 1000000f) +
+               "ms, totalBenchmarkTime=" + decimal(totalBenchmarkTime / 1000000f) +
                "ms}";
     }
 }
