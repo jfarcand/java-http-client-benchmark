@@ -28,7 +28,7 @@ import org.factor45.jhcb.result.BenchmarkResult;
  */
 public class BenchmarkRunner {
 
-    private final static String TARGET_URL = "http://10.0.1.3:8081";
+    private final static String TARGET_URL = "http://10.0.1.4:8081";
 
     // public static methods ------------------------------------------------------------------------------------------
 
@@ -70,8 +70,8 @@ public class BenchmarkRunner {
     {
         System.out.close();
 
-        runSimpleAhcBenchmark();
-        runApacheBenchmark();
+//        runSimpleAhcBenchmark();
+//        runApacheBenchmark();
         runAhcBenchmark();
 
         // Hot Potato perform pretty well but doesn't support all the features needed to be considered stable.

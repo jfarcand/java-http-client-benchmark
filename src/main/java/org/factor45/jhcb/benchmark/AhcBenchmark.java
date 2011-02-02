@@ -15,7 +15,6 @@
  */
 package org.factor45.jhcb.benchmark;
 
-import com.ning.http.client.AsyncCompletionHandlerBase;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.Response;
@@ -105,33 +104,19 @@ public class AhcBenchmark extends AbstractBenchmark {
                     final CountDownLatch responseReceivedLatch = new CountDownLatch(requestsPerThreadPerBatch);
                     for (int i = 0; i < requestsPerThreadPerBatch; i++) {
                         try {
-                            client.prepareGet(url).execute(new AsyncCompletionHandlerBase() {
+                            Response response = client.prepareGet(url).execute().get();
 
+                            if ((response.getStatusCode() >= 200) && (response.getStatusCode() <= 299)) {
+                                successful.incrementAndGet();
+                            }
 
-                                @Override
-                                public void onThrowable(Throwable t) {
-                                    responseReceivedLatch.countDown();                                    
-                                }
-
-                                @Override
-                                public Response onCompleted(Response response) throws Exception {
-                                    if ((response.getStatusCode() >= 200) && (response.getStatusCode() <= 299)) {
-                                        successful.incrementAndGet();
-                                    }
-                                    responseReceivedLatch.countDown();
-                                    return response;
-                                }
-                            });
-
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
                         } catch (IOException e) {
-                            System.err.println("Failed to execute request.");
+                            e.printStackTrace();
                         }
-                    }
-
-                    try {
-                        responseReceivedLatch.await();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
                     long totalTime = System.nanoTime() - start;
                     threadResults.add(new ThreadResult(requestsPerThreadPerBatch, successful.get(), totalTime));

@@ -15,6 +15,12 @@
  */
 package org.factor45.jhcb.benchmark;
 
+import com.ning.http.client.Response;
+import com.ning.http.client.SimpleAsyncHttpClient;
+import com.ning.http.client.ThrowableHandler;
+import org.factor45.jhcb.result.BatchResult;
+import org.factor45.jhcb.result.ThreadResult;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,19 +30,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.factor45.jhcb.result.BatchResult;
-import org.factor45.jhcb.result.ThreadResult;
-
-import com.ning.http.client.Response;
-import com.ning.http.client.SimpleAsyncHttpClient;
-import com.ning.http.client.ThrowableHandler;
-
 /**
  * @author <a href="http://bruno.factor45.org/">Bruno de Carvalho</a>
  */
 public class SimpleAhcBenchmark
-    extends AbstractBenchmark
-{
+        extends AbstractBenchmark {
 
     // internal vars --------------------------------------------------------------------------------------------------
 
@@ -44,137 +42,110 @@ public class SimpleAhcBenchmark
 
     // constructors ---------------------------------------------------------------------------------------------------
 
-    public SimpleAhcBenchmark( int threads, int requestsPerThreadPerBatch, int batches, String uri )
-    {
-        super( threads, requestsPerThreadPerBatch, batches, uri );
+    public SimpleAhcBenchmark(int threads, int requestsPerThreadPerBatch, int batches, String uri) {
+        super(threads, requestsPerThreadPerBatch, batches, uri);
     }
 
     // AbstractBenchmark ----------------------------------------------------------------------------------------------
 
     @Override
-    protected void setup()
-    {
+    protected void setup() {
         super.setup();
 
         this.client =
-            new SimpleAsyncHttpClient.Builder().setMaximumConnectionsPerHost( 10 ).setConnectionTimeoutInMs( 0 ).build();
+                new SimpleAsyncHttpClient.Builder().setMaximumConnectionsPerHost(10).setConnectionTimeoutInMs(0).build();
     }
 
     @Override
-    protected void tearDown()
-    {
+    protected void tearDown() {
         super.tearDown();
 
         this.client.close();
     }
 
     @Override
-    protected void warmup()
-    {
-        List<Future<Response>> futures = new ArrayList<Future<Response>>( this.warmupRequests );
-        for ( int i = 0; i < this.warmupRequests; i++ )
-        {
-            try
-            {
-                futures.add( this.client.derive().setUrl( this.url ).build().get() );
+    protected void warmup() {
+        List<Future<Response>> futures = new ArrayList<Future<Response>>(this.warmupRequests);
+        for (int i = 0; i < this.warmupRequests; i++) {
+            try {
+                futures.add(this.client.derive().setUrl(this.url).build().get());
             }
-            catch ( IOException e )
-            {
-                System.err.println( "Failed to execute get at iteration #" + i );
+            catch (IOException e) {
+                System.err.println("Failed to execute get at iteration #" + i);
             }
         }
 
-        for ( Future<Response> future : futures )
-        {
-            try
-            {
+        for (Future<Response> future : futures) {
+            try {
                 future.get();
             }
-            catch ( InterruptedException e )
-            {
+            catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            catch ( ExecutionException e )
-            {
+            catch (ExecutionException e) {
                 e.printStackTrace();
             }
         }
     }
 
     @Override
-    protected BatchResult runBatch()
-    {
-        final CountDownLatch latch = new CountDownLatch( this.threads );
-        final Vector<ThreadResult> threadResults = new Vector<ThreadResult>( this.threads );
+    protected BatchResult runBatch() {
+        final CountDownLatch latch = new CountDownLatch(this.threads);
+        final Vector<ThreadResult> threadResults = new Vector<ThreadResult>(this.threads);
 
         long batchStart = System.nanoTime();
-        for ( int i = 0; i < this.threads; i++ )
-        {
-            this.executor.submit( new Runnable()
-            {
+        for (int i = 0; i < this.threads; i++) {
+            this.executor.submit(new Runnable() {
 
                 @Override
-                public void run()
-                {
+                public void run() {
                     final AtomicInteger successful = new AtomicInteger();
                     long start = System.nanoTime();
-                    final CountDownLatch responseReceivedLatch = new CountDownLatch( requestsPerThreadPerBatch );
-                    for ( int i = 0; i < requestsPerThreadPerBatch; i++ )
-                    {
-                        try
-                        {
-                            SimpleAsyncHttpClient derived = client.derive().setUrl( url ).build();
+                    final CountDownLatch responseReceivedLatch = new CountDownLatch(requestsPerThreadPerBatch);
+                    for (int i = 0; i < requestsPerThreadPerBatch; i++) {
+                        try {
+                            SimpleAsyncHttpClient derived = client.derive().setUrl(url).build();
 
-                            Future<Response> future = derived.get( new ThrowableHandler()
-                            {
+                            Future<Response> future = derived.get(new ThrowableHandler() {
                                 @Override
-                                public void onThrowable( Throwable t )
-                                {
+                                public void onThrowable(Throwable t) {
                                     responseReceivedLatch.countDown();
                                 }
 
-                            } );
+                            });
 
-                            try
-                            {
+                            try {
                                 Response response = future.get();
 
-                                if ( ( response.getStatusCode() >= 200 ) && ( response.getStatusCode() <= 299 ) )
-                                {
+                                if ((response.getStatusCode() >= 200) && (response.getStatusCode() <= 299)) {
                                     successful.incrementAndGet();
                                 }
                             }
-                            catch ( InterruptedException e )
-                            {
-                                System.err.println( "Failed to execute request." + e.getMessage() );
+                            catch (InterruptedException e) {
+                                System.err.println("Failed to execute request." + e.getMessage());
                             }
-                            catch ( ExecutionException e )
-                            {
-                                System.err.println( "Failed to execute request." + e.getMessage() );
+                            catch (ExecutionException e) {
+                                System.err.println("Failed to execute request." + e.getMessage());
                             }
-                            finally
-                            {
+                            finally {
                                 responseReceivedLatch.countDown();
                                 derived.close();
                             }
 
                         }
-                        catch ( IOException e )
-                        {
-                            System.err.println( "Failed to execute request." );
+                        catch (IOException e) {
+                            System.err.println("Failed to execute request.");
                         }
                     }
 
-                    try
-                    {
+                    try {
                         responseReceivedLatch.await();
                     }
-                    catch ( InterruptedException e )
-                    {
+                    catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     long totalTime = System.nanoTime() - start;
-                    threadResults.add( new ThreadResult( requestsPerThreadPerBatch, successful.get(), totalTime ) );
+                    threadResults.add(new ThreadResult(requestsPerThreadPerBatch, successful.get(), totalTime));
                     latch.countDown();
                 }
             }
@@ -182,16 +153,14 @@ public class SimpleAhcBenchmark
             );
         }
 
-        try
-        {
+        try {
             latch.await();
         }
-        catch ( InterruptedException e )
-        {
+        catch (InterruptedException e) {
             Thread.interrupted();
         }
         long batchTotalTime = System.nanoTime() - batchStart;
 
-        return new BatchResult( threadResults, batchTotalTime );
+        return new BatchResult(threadResults, batchTotalTime);
     }
 }
