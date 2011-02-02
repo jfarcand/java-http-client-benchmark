@@ -164,7 +164,7 @@
                 </executions>
                 <configuration>
                     <arguments>
-                        <argument>http://localhost:9999/app/</argument>
+                        <argument>http://10.0.1.4:8081</argument>
                     </arguments>
                     <mainClass>org.factor45.jhcb.BenchmarkRunner</mainClass>
                 </configuration>

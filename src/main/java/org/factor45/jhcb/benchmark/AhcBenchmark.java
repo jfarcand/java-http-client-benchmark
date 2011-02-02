@@ -109,7 +109,6 @@ public class AhcBenchmark extends AbstractBenchmark {
                             if ((response.getStatusCode() >= 200) && (response.getStatusCode() <= 299)) {
                                 successful.incrementAndGet();
                             }
-
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (ExecutionException e) {

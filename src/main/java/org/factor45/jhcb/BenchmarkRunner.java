@@ -28,7 +28,7 @@ import org.factor45.jhcb.result.BenchmarkResult;
  */
 public class BenchmarkRunner {
 
-    private final static String TARGET_URL = "http://10.0.1.4:8081";
+    private static String TARGET_URL = "http://10.0.1.4:8081";
 
     // public static methods ------------------------------------------------------------------------------------------
 
@@ -68,7 +68,8 @@ public class BenchmarkRunner {
     public static void main( String[] args )
         throws Exception
     {
-//        System.out.close();
+        if (args[0] != null)
+            TARGET_URL = args[0];
 
         runSimpleAhcBenchmark();
         runApacheBenchmark();
