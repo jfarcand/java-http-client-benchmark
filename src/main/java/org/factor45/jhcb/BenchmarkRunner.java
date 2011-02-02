@@ -68,10 +68,10 @@ public class BenchmarkRunner {
     public static void main( String[] args )
         throws Exception
     {
-        System.out.close();
+//        System.out.close();
 
-//        runSimpleAhcBenchmark();
-//        runApacheBenchmark();
+        runSimpleAhcBenchmark();
+        runApacheBenchmark();
         runAhcBenchmark();
 
         // Hot Potato perform pretty well but doesn't support all the features needed to be considered stable.
