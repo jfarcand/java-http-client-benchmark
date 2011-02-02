@@ -68,7 +68,7 @@ public class BenchmarkRunner {
     public static void main( String[] args )
         throws Exception
     {
-        if (args[0] != null)
+        if (args.length > 0 && args[0] != null)
             TARGET_URL = args[0];
 
         runSimpleAhcBenchmark();
