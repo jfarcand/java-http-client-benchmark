@@ -20,6 +20,7 @@ import org.factor45.jhcb.benchmark.AhcBenchmark;
 import org.factor45.jhcb.benchmark.ApacheBenchmark;
 import org.factor45.jhcb.benchmark.HotpotatoBenchmark;
 import org.factor45.jhcb.benchmark.HotpotatoPipeliningBenchmark;
+import org.factor45.jhcb.benchmark.JettyBenchmark;
 import org.factor45.jhcb.benchmark.SimpleAhcBenchmark;
 import org.factor45.jhcb.result.BenchmarkResult;
 
@@ -45,22 +46,28 @@ public class BenchmarkRunner {
     }
 
     public static void runApacheBenchmark() {
-        AbstractBenchmark benchmark = new ApacheBenchmark(50, 50, 50, TARGET_URL);
+        AbstractBenchmark benchmark = new ApacheBenchmark(50, 50, 10, TARGET_URL);
         BenchmarkResult result = benchmark.doBenchmark();
         System.err.println( result );
     }
 
     public static void runAhcBenchmark() {
-        AbstractBenchmark benchmark = new AhcBenchmark(50, 50, 50, TARGET_URL);
+        AbstractBenchmark benchmark = new AhcBenchmark(50, 50, 10, TARGET_URL);
         BenchmarkResult result = benchmark.doBenchmark();
         System.err.println( result );
     }
 
-    public static void runSimpleAhcBenchmark()
+    public static void runJettyBenchmark()
     {
-        AbstractBenchmark benchmark = new SimpleAhcBenchmark( 50, 50, 50, TARGET_URL );
+        JettyBenchmark benchmark = new JettyBenchmark( 50, 50, 10, TARGET_URL );
         BenchmarkResult result = benchmark.doBenchmark();
         System.err.println( result );
+    }
+
+    public static void runSimpleAhcBenchmark() {
+        AbstractBenchmark benchmark = new SimpleAhcBenchmark(50, 50, 10, TARGET_URL);
+        BenchmarkResult result = benchmark.doBenchmark();
+        System.err.println(result);
     }
 
     // main -----------------------------------------------------------------------------------------------------------
@@ -74,9 +81,10 @@ public class BenchmarkRunner {
         runSimpleAhcBenchmark();
         runApacheBenchmark();
         runAhcBenchmark();
+        runJettyBenchmark();
 
         // Hot Potato perform pretty well but doesn't support all the features needed to be considered stable.
-        // runHotpotatoBenchmark();
+        //runHotpotatoBenchmark();
         // runApacheBenchmark();
     }
 }

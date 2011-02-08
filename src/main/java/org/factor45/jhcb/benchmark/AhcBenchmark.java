@@ -101,7 +101,6 @@ public class AhcBenchmark extends AbstractBenchmark {
                 public void run() {
                     final AtomicInteger successful = new AtomicInteger();
                     long start = System.nanoTime();
-                    final CountDownLatch responseReceivedLatch = new CountDownLatch(requestsPerThreadPerBatch);
                     for (int i = 0; i < requestsPerThreadPerBatch; i++) {
                         try {
                             Response response = client.prepareGet(url).execute().get();
