@@ -15,6 +15,7 @@
  */
 package org.factor45.jhcb.benchmark;
 
+import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpExchange;
 import org.factor45.jhcb.result.BatchResult;
@@ -68,7 +69,7 @@ public class JettyBenchmark extends AbstractBenchmark {
 
         for (int i = 0; i < this.warmupRequests; i++) {
 
-            HttpExchange.ContentExchange exchange = new HttpExchange.ContentExchange();
+            ContentExchange exchange = new ContentExchange();
 
             exchange.setURL(this.url);
 
@@ -99,7 +100,7 @@ public class JettyBenchmark extends AbstractBenchmark {
                     long start = System.nanoTime();
                     final CountDownLatch responseReceivedLatch = new CountDownLatch(requestsPerThreadPerBatch);
                     for (int i = 0; i < requestsPerThreadPerBatch; i++) {
-                        HttpExchange.ContentExchange exchange = new HttpExchange.ContentExchange();
+                        ContentExchange exchange = new ContentExchange();
 
                         exchange.setURL(url);
 
