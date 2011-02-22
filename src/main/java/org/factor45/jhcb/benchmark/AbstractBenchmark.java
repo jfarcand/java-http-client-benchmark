@@ -75,7 +75,7 @@ public abstract class AbstractBenchmark {
         for (int i = 0; i < this.batches; i++) {
             BatchResult result = this.runBatch();
             results.add(result);
-            System.err.println("Batch " + i + " finished: " + result);
+            //System.err.println("Batch " + i + " finished: " + result);
         }
 
         System.err.println("Test finished, shutting down and calculating results...");

@@ -33,11 +33,6 @@
     </licenses>
     <dependencies>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>0.9.26</version>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.6.1</version>
@@ -169,7 +164,7 @@
                 </executions>
                 <configuration>
                     <arguments>
-                        <argument>http://10.0.1.4:8081</argument>
+                        <argument>http://localhost:8080/index.html</argument>
                     </arguments>
                     <mainClass>org.factor45.jhcb.BenchmarkRunner</mainClass>
                 </configuration>
