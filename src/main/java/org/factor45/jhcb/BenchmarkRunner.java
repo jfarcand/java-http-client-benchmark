@@ -18,8 +18,6 @@ package org.factor45.jhcb;
 import org.factor45.jhcb.benchmark.AbstractBenchmark;
 import org.factor45.jhcb.benchmark.AhcBenchmark;
 import org.factor45.jhcb.benchmark.ApacheBenchmark;
-import org.factor45.jhcb.benchmark.HotpotatoBenchmark;
-import org.factor45.jhcb.benchmark.HotpotatoPipeliningBenchmark;
 import org.factor45.jhcb.benchmark.JettyBenchmark;
 import org.factor45.jhcb.benchmark.SimpleAhcBenchmark;
 import org.factor45.jhcb.result.BenchmarkResult;
@@ -32,18 +30,6 @@ public class BenchmarkRunner {
     private static String TARGET_URL = "http://10.0.1.4:8081";
 
     // public static methods ------------------------------------------------------------------------------------------
-
-    public static void runHotpotatoBenchmark() {
-        AbstractBenchmark benchmark = new HotpotatoBenchmark(50, 50, 50, TARGET_URL);
-        BenchmarkResult result = benchmark.doBenchmark();
-        System.out.println(result);
-    }
-
-    public static void runHotpotatoPipeliningBenchmark() {
-        AbstractBenchmark benchmark = new HotpotatoPipeliningBenchmark(10, 10, 50, TARGET_URL);
-        BenchmarkResult result = benchmark.doBenchmark();
-        System.out.println(result);
-    }
 
     public static void runApacheBenchmark() {
         AbstractBenchmark benchmark = new ApacheBenchmark(50, 50, 10, TARGET_URL);
@@ -82,9 +68,5 @@ public class BenchmarkRunner {
         runApacheBenchmark();
         runAhcBenchmark();
         runJettyBenchmark();
-
-        // Hot Potato perform pretty well but doesn't support all the features needed to be considered stable.
-        //runHotpotatoBenchmark();
-        // runApacheBenchmark();
     }
 }
