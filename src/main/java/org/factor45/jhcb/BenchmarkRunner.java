@@ -17,6 +17,7 @@ package org.factor45.jhcb;
 
 import org.factor45.jhcb.benchmark.AbstractBenchmark;
 import org.factor45.jhcb.benchmark.AhcBenchmark;
+import org.factor45.jhcb.benchmark.AhcGrizzlyBenchmark;
 import org.factor45.jhcb.benchmark.ApacheBenchmark;
 import org.factor45.jhcb.benchmark.JettyBenchmark;
 import org.factor45.jhcb.benchmark.SimpleAhcBenchmark;
@@ -39,6 +40,12 @@ public class BenchmarkRunner {
 
     public static void runAhcBenchmark() {
         AbstractBenchmark benchmark = new AhcBenchmark(100, 50, 10, TARGET_URL);
+        BenchmarkResult result = benchmark.doBenchmark();
+        System.err.println( result );
+    }
+
+    public static void runAhcGrizzlyBenchmark() {
+        AbstractBenchmark benchmark = new AhcGrizzlyBenchmark(100, 50, 10, TARGET_URL);
         BenchmarkResult result = benchmark.doBenchmark();
         System.err.println( result );
     }
@@ -66,7 +73,9 @@ public class BenchmarkRunner {
 
         runSimpleAhcBenchmark();
         runApacheBenchmark();
+        runAhcGrizzlyBenchmark();
         runAhcBenchmark();
         runJettyBenchmark();
+
     }
 }
